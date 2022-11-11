@@ -1,0 +1,28 @@
+Made by Francisco Lara Rico
+
+Short explanation of the purpose of this project in the file "file.c".
+To compile the program and generate the executable file called "file":
+$ make
+After that you can:
+$ ./file --create [subject_name]
+OR
+$ ./file --add [subject_name] [mark] [section]
+OR
+$ ./file --moy [subject_name]
+Where:
+-[subject_name] can be:
+	maths
+	algo
+	archi
+	phy
+	elec
+	prog
+-[mark] can be an integer or float between 0 and 20
+	WARNING: FOR FLOATS, USE A COMMA ',' INSTEAD OF A DOT '.'
+-[section] can be:
+	qcm 	(all subjects but prog)
+	tp		(only prog)
+	ci		(only maths)
+	mid		(all subjects)
+	final	(all subjects)
+
