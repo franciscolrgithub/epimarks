@@ -1,0 +1,66 @@
+name: Test Msys2
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include: [
+          # { msystem: MINGW64, runner: windows-2022 },
+          { msystem: MINGW32, runner: windows-2022 },
+          # { msystem: UCRT64, runner: windows-2022 },
+          # { msystem: CLANG64, runner: windows-2022 },
+          # { msystem: CLANG32, runner: windows-2022 },
+          # { msystem: CLANGARM64, runner: ['Windows', 'ARM64', 'CI'] }
+        ]
+    name: ${{ matrix.msystem }}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Get CPU Name
+        run : |
+          Get-CIMInstance -Class Win32_Processor | Select-Object -Property Name
+
+      - uses: actions/checkout@v3
+        with:
+          path: temp
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ contains(matrix.msystem, 'ARM64') && 'MSYS' || matrix.msystem }}
+          install: git base-devel
+          update: true
+          release: ${{ runner.arch != 'ARM64' }}
+          location: 'D:\M'
+
+      - name: "Install GCC and UNZIP"
+        shell: msys2 {0}
+        run : |
+            pacman -Su --noconfirm mingw32/mingw-w64-i686-gcc
+            pacman -Su --noconfirm msys/unzip
+
+      - name: "Test GCC and UNZIP"
+        shell: msys2 {0}
+        run : |
+            gcc --version
+            unzip -v
+
+      - name: "Compile & Linking"
+        shell: msys2 {0}
+        run: |
+             cd temp
+             make
+
+      - name: "Upload binaries"
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.msystem }}-packages
+          path: temp/file.exe

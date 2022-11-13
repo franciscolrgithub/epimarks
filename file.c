@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <err.h>
 #include "utils.h"
 
 /*
@@ -23,7 +22,7 @@
 	By Francisco Lara Rico, November 11 2022
 */
 
-
+#define errx(errcode, ...) do { fprintf(stderr, __VA_ARGS__); exit(errcode); } while (0)
 
 float moyenne(float marks[][10], char subject[])
 {
