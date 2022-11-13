@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <err.h>
+
+#define errx(errcode, ...) do { fprintf(stderr, __VA_ARGS__); exit(errcode); } while (0)
 
 void print_matrix(float marks[][10], size_t rows)
 {
